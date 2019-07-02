@@ -35,6 +35,8 @@ Response是一个响应组件
     $collector = Response::error('请求失败');
     $collector = Response::broadcast('广播');
     $collector = Response::goon('步进请求');
+    $collector = Response::notPermission('权限限制');
+    $collector = Response::notFound('资源丢失');
     
     // 其中exception/abort方法在debug模式下会打印出所有的trace
     // 而在其他环境中(如正式环境)，会自动降权，只显示关键的错误提示，提升系统的安全性

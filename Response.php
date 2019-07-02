@@ -131,7 +131,7 @@ class Response
         return $HandleCollector;
     }
 
-    public function notPermission(string $msg = 'not permission', array $data = array(), $type = 'json', $charset = 'utf-8')
+    public static function notPermission(string $msg = 'not permission', array $data = array(), $type = 'json', $charset = 'utf-8')
     {
         $HandleCollector = new Collector();
         $HandleCollector
@@ -146,7 +146,7 @@ class Response
         return $HandleCollector;
     }
 
-    public function notFound(string $msg = 'not found', array $data = array(), $type = 'json', $charset = 'utf-8')
+    public static function notFound(string $msg = 'not found', array $data = array(), $type = 'json', $charset = 'utf-8')
     {
         $HandleCollector = new Collector();
         $HandleCollector
