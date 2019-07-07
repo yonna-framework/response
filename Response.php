@@ -6,6 +6,8 @@
 
 namespace Yonna\Response;
 
+use Throwable;
+
 /**
  * Class Response
  * @package Core\Core
@@ -15,22 +17,20 @@ class Response
 
     /**
      * safety debug backtrace
-     * @param int $safeLv 安全等级，数字越高安全性越高
-     * @param null $trace
+     * @param array $trace
+     * * @param bool $safe 是否安全模式
      * @return array
      */
-    private static function debug_backtrace($safeLv = 0, $trace = null)
+    private static function debug_backtrace(array $trace, bool $safe = true)
     {
         $path = realpath(__DIR__ . '/../../../..');
-        if (empty($trace)) $trace = debug_backtrace();
+        if (!$trace) {
+            return [];
+        }
         foreach ($trace as $tk => $t) {
-            if ($safeLv >= 3) {
+            if ($safe === true) {
                 if (isset($t['line'])) unset($trace[$tk]['line']);
-            }
-            if ($safeLv >= 2) {
                 if (isset($t['type'])) unset($trace[$tk]['type']);
-            }
-            if ($safeLv >= 1) {
                 if (isset($t['object'])) unset($trace[$tk]['object']);
                 if (isset($t['args'])) unset($trace[$tk]['args']);
                 if (!empty($t['file'])) {
@@ -52,6 +52,18 @@ class Response
     public static function handle(Collector $Collector)
     {
         return $Collector->response();
+    }
+
+    public static function throwable(Throwable $t, $type = 'json', $charset = 'utf-8')
+    {
+        $HandleCollector = new Collector();
+        $HandleCollector
+            ->setResponseDataType($type)
+            ->setCharset($charset)
+            ->setCode($t->getCode())
+            ->setMsg($t->getMessage())
+            ->setData(self::debug_backtrace($t->getTrace(), getenv('IS_DEBUG') !== 'true'));
+        return $HandleCollector;
     }
 
     public static function success(string $msg = 'success', array $data = array(), $type = 'json', $charset = 'utf-8')
@@ -102,21 +114,6 @@ class Response
         return $HandleCollector;
     }
 
-    public static function exception(string $msg = 'exception', array $data = array(), $type = 'json', $charset = 'utf-8')
-    {
-        $HandleCollector = new Collector();
-        $HandleCollector
-            ->setResponseDataType($type)
-            ->setCharset($charset)
-            ->setCode(Code::EXCEPTION)
-            ->setMsg($msg)
-            ->setData($data)
-            ->setExtra(array('debug_backtrace' => getenv('IS_DEBUG') === 'true'
-                ? static::debug_backtrace(0, $data) : static::debug_backtrace(1, $data),
-            ));
-        return $HandleCollector;
-    }
-
     public static function abort(string $msg = 'abort', array $data = array(), $type = 'json', $charset = 'utf-8')
     {
         $HandleCollector = new Collector();
@@ -125,9 +122,7 @@ class Response
             ->setCharset($charset)
             ->setCode(Code::ABORT)
             ->setMsg($msg)
-            ->setExtra(array('debug_backtrace' => getenv('IS_DEBUG') === 'true'
-                ? static::debug_backtrace(1, $data) : static::debug_backtrace(2, $data),
-            ));
+            ->setData($data);
         return $HandleCollector;
     }
 
@@ -139,10 +134,7 @@ class Response
             ->setCharset($charset)
             ->setCode(Code::NOT_PERMISSION)
             ->setMsg($msg)
-            ->setData($data)
-            ->setExtra(array('debug_backtrace' => getenv('IS_DEBUG') === 'true'
-                ? static::debug_backtrace(2, $data) : static::debug_backtrace(3, $data),
-            ));
+            ->setData($data);
         return $HandleCollector;
     }
 
@@ -154,9 +146,7 @@ class Response
             ->setCharset($charset)
             ->setCode(Code::NOT_FOUND)
             ->setMsg($msg)
-            ->setExtra(array('debug_backtrace' => getenv('IS_DEBUG') === 'true'
-                ? static::debug_backtrace(2, $data) : static::debug_backtrace(3, $data),
-            ));
+            ->setData($data);
         return $HandleCollector;
     }
 

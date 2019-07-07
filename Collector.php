@@ -19,7 +19,6 @@ class Collector
     private $code = 0;
     private $msg = '';
     private $data = array();
-    private $extra = array();
 
     public function __construct()
     {
@@ -117,35 +116,12 @@ class Collector
     }
 
     /**
-     * @return array
-     */
-    public function getExtra(): array
-    {
-        return $this->extra;
-    }
-
-    /**
-     * @param array $extra
-     * @return Collector
-     */
-    public function setExtra(array $extra): self
-    {
-        $this->extra = $extra;
-        return $this;
-    }
-
-    /**
      * to array
      * @return array
      */
     public function toArray()
     {
         $data = $this->getData();
-        if ($this->getExtra()) {
-            foreach ($this->getExtra() as $k => $v) {
-                $data[$k] = $v;
-            }
-        }
         return array(
             'code' => $this->getCode(),
             'msg' => $this->getMsg(),
