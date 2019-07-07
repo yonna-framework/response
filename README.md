@@ -37,13 +37,13 @@ Response是一个响应组件
     $collector = Response::goon('步进请求');
     $collector = Response::notPermission('权限限制');
     $collector = Response::notFound('资源丢失');
-    
-    // 其中exception/abort方法在debug模式下会打印出所有的trace
-    // 而在其他环境中(如正式环境)，会自动降权，只显示关键的错误提示，提升系统的安全性
-    // * 根据 .env IS_DEBUG 进行判断
-    
-    $collector = Response::exception('抛出');
     $collector = Response::abort('中断');
+    
+    // 其中throwable方法为特殊方法（一般用于跟踪抛出错误）
+    // 在debug模式下会打印出所有的trace
+    // * 根据 .env 文件内 IS_DEBUG 是否为 true 进行判断
+    
+    $collector = Response::throwable((new Exception('抛出')));
     
     // 你可以使用对象的各类转换方法，获得你想要的数据格式
     
