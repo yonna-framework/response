@@ -16,7 +16,8 @@ class Code
     const BROADCAST = 201;
     const GOON = 202;
     const INFO = 300;
-    const ERROR = 401;
+    const THROWABLE = 401;
+    const ERROR = 402;
     const NOT_PERMISSION = 403;
     const NOT_FOUND = 404;
     const ABORT = 405;

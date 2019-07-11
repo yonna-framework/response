@@ -60,9 +60,12 @@ class Response
         $HandleCollector
             ->setResponseDataType($type)
             ->setCharset($charset)
-            ->setCode($t->getCode())
+            ->setCode(Code::THROWABLE)
             ->setMsg($t->getMessage())
-            ->setData(self::debug_backtrace($t->getTrace(), getenv('IS_DEBUG') !== 'true'));
+            ->setData([
+                'error_code' => $t->getCode(),
+                'error_trace' => self::debug_backtrace($t->getTrace(), getenv('IS_DEBUG') !== 'true')
+            ]);
         return $HandleCollector;
     }
 
