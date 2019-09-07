@@ -5,6 +5,7 @@
 
 namespace Yonna\Response;
 
+use Throwable;
 use Yonna\Foundation\Convert;
 
 /**
@@ -234,7 +235,11 @@ class Collector
      */
     public function end()
     {
-        header($this->getHeader('str'));
+        try {
+            header($this->getHeader('str'));
+        } catch (Throwable $e) {
+            exit('Yonna cannot modify header information - headers already sent by');
+        }
         exit($this->response());
     }
 
