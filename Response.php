@@ -16,6 +16,26 @@ class Response
 {
 
     /**
+     * 处理 args
+     * @param array $args
+     * @return array
+     */
+    private static function args(array $args)
+    {
+        if (empty($args)) {
+            return [];
+        }
+        foreach ($args as &$a) {
+            if (is_array($a)) {
+                $a = self::args($a);
+            } else if (is_object($a)) {
+                $a = '[object]' . get_class($a);
+            }
+        }
+        return $args;
+    }
+
+    /**
      * safety debug backtrace
      * @param array $trace
      * * @param bool $safe 是否安全模式
@@ -40,6 +60,8 @@ class Response
                         $t['file']
                     ));
                 }
+            } else {
+                $trace[$tk]['args'] = self::args($t['args']);
             }
         }
         return $trace;
