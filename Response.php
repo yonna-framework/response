@@ -91,6 +91,22 @@ class Response
         return $HandleCollector;
     }
 
+    public static function error(Throwable $t, array $data = array(), $type = 'json', $charset = 'utf-8')
+    {
+        $HandleCollector = new Collector();
+        $HandleCollector
+            ->setResponseDataType($type)
+            ->setCharset($charset)
+            ->setCode(Code::ERROR)
+            ->setMsg($t->getMessage())
+            ->setData([
+                'error_code' => $t->getCode(),
+                'error_data' => $data,
+                'error_trace' => self::debug_backtrace($t->getTrace(), getenv('IS_DEBUG') !== 'true')
+            ]);
+        return $HandleCollector;
+    }
+
     public static function success(string $msg = 'success', array $data = array(), $type = 'json', $charset = 'utf-8')
     {
         $HandleCollector = new Collector();
@@ -122,18 +138,6 @@ class Response
             ->setResponseDataType($type)
             ->setCharset($charset)
             ->setCode(Code::GOON)
-            ->setMsg($msg)
-            ->setData($data);
-        return $HandleCollector;
-    }
-
-    public static function error(string $msg = 'error', array $data = array(), $type = 'json', $charset = 'utf-8')
-    {
-        $HandleCollector = new Collector();
-        $HandleCollector
-            ->setResponseDataType($type)
-            ->setCharset($charset)
-            ->setCode(Code::ERROR)
             ->setMsg($msg)
             ->setData($data);
         return $HandleCollector;
