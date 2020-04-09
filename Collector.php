@@ -95,6 +95,12 @@ class Collector
     public function setMsg(string $msg): self
     {
         $this->msg = $msg;
+        if (class_exists("\\Yonna\\I18n\\I18n")) {
+            $i18n = new \Yonna\I18n\I18n();
+            $i18n->set($msg, [
+                'source' => 'response'
+            ]);
+        }
         return $this;
     }
 
